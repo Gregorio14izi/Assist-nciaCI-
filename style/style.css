@@ -1,0 +1,17 @@
+/* Estilizações padrão do projeto */
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Garante o posicionamento correto do rodapé no fundo da página */
+footer {
+    margin-top: auto;
+}
+
+/* Arredondamento suave para os cards */
+.card {
+    border-radius: 8px;
+}
