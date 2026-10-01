@@ -1,28 +1,56 @@
 <?php
-require_once __DIR__ . '/../includes/functions.php';
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
 
-// Exige autenticação
-protegerPagina();
+// Proteção de acesso: redireciona se o utilizador não estiver autenticado
+if (!isset($_SESSION['usuario_id'])) {
+    header("Location: ../login/login.php");
+    exit();
+}
 
-// Busca os clientes no PostgreSQL
-$stmt = $pdo->query("SELECT * FROM clientes ORDER BY id DESC");
-$clientes = $stmt->fetchAll();
+// Conexão à base de dados
+require_once __DIR__ . '/../database/connect.php';
 
-require_once __DIR__ . '/../includes/header.php';
+// Compatibilidade de nome de variável da conexão
+if (!isset($conn) && isset($pdo)) {
+    $conn = $pdo;
+} elseif (!isset($conn) && isset($conexao)) {
+    $conn = $conexao;
+}
+
+include_once __DIR__ . '/../includes/header.php';
 ?>
 
-<div class="d-flex justify-content-between align-items-center mb-4">
-    <h2>Painel Geral de Clientes</h2>
-    <a href="<?= BASE_URL; ?>index.php" class="btn btn-success">+ Novo Cliente</a>
-</div>
+<div class="container my-4">
 
-<div class="card shadow-sm">
-    <div class="card-body p-0">
-        <div class="table-responsive">
-            <table class="table table-hover table-striped mb-0 align-middle">
+    <!-- 📌 MURAL DE AVISOS DA ASSISTÊNCIA -->
+    <div class="card mb-4 border-warning shadow-sm">
+        <div class="card-header bg-warning text-dark fw-bold">
+            📌 Mural de Avisos da Assistência
+        </div>
+        <div class="card-body">
+            <ul class="mb-0">
+                <li><strong>Aviso:</strong> Multímetro de bancada #02 está em manutenção.</li>
+                <li><strong>Lembrete:</strong> Verificar estoque de conectores de carga Tipo-C.</li>
+                <li><strong>Entrega urgente:</strong> Notebook Dell do cliente João deve ser testado até às 17h.</li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- TÍTULO E BOTÃO DE NOVO CLIENTE -->
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h2>Painel Geral de Clientes</h2>
+        <a href="create.php" class="btn btn-success">+ Novo Cliente</a>
+    </div>
+
+    <!-- TABELA DE CLIENTES -->
+    <div class="card shadow-sm">
+        <div class="card-body p-0">
+            <table class="table table-striped table-hover mb-0">
                 <thead class="table-dark">
                     <tr>
-                        <th>ID</th>
+                        <th class="text-center">ID</th>
                         <th>Nome</th>
                         <th>E-mail</th>
                         <th>Telefone</th>
@@ -30,29 +58,43 @@ require_once __DIR__ . '/../includes/header.php';
                     </tr>
                 </thead>
                 <tbody>
-                    <?php if (count($clientes) > 0): ?>
-                        <?php foreach ($clientes as $c): ?>
-                            <tr>
-                                <td><?= e($c['id']); ?></td>
-                                <td><?= e($c['nome']); ?></td>
-                                <td><?= e($c['email']); ?></td>
-                                <td><?= e($c['telefone']); ?></td>
-                                <td class="text-center">
-                                    <a href="<?= BASE_URL; ?>app/select_where.php?id=<?= $c['id']; ?>" class="btn btn-sm btn-info text-white">Ver</a>
-                                    <a href="<?= BASE_URL; ?>app/update.php?id=<?= $c['id']; ?>" class="btn btn-sm btn-warning">Editar</a>
-                                    <a href="<?= BASE_URL; ?>app/delete.php?id=<?= $c['id']; ?>" class="btn btn-sm btn-danger" onclick="return confirm('Tem certeza que deseja excluir?');">Excluir</a>
-                                </td>
-                            </tr>
-                        <?php endforeach; ?>
-                    <?php else: ?>
-                        <tr>
-                            <td colspan="5" class="text-center py-4 text-muted">Nenhum cliente cadastrado no banco de dados.</td>
-                        </tr>
-                    <?php endif; ?>
+                    <?php
+                    if (isset($conn) && $conn !== null) {
+                        try {
+                            $sql = "SELECT * FROM clientes";
+                            $stmt = $conn->query($sql);
+                            
+                            if ($stmt && $stmt->rowCount() > 0) {
+                                while ($cliente = $stmt->fetch(PDO::FETCH_ASSOC)) {
+                                    ?>
+                                    <tr>
+                                        <td class="text-center"><?= htmlspecialchars($cliente['id']); ?></td>
+                                        <td><?= htmlspecialchars($cliente['nome']); ?></td>
+                                        <td><?= htmlspecialchars($cliente['email']); ?></td>
+                                        <td><?= htmlspecialchars($cliente['telefone']); ?></td>
+                                        <td class="text-center">
+                                            <a href="select_where.php?id=<?= $cliente['id']; ?>" class="btn btn-sm btn-info text-white">Ver</a>
+                                            <a href="update.php?id=<?= $cliente['id']; ?>" class="btn btn-sm btn-warning text-white">Editar</a>
+                                            <a href="delete.php?id=<?= $cliente['id']; ?>" class="btn btn-sm btn-danger">Excluir</a>
+                                        </td>
+                                    </tr>
+                                    <?php
+                                }
+                            } else {
+                                echo '<tr><td colspan="5" class="text-center p-3">Nenhum cliente cadastrado.</td></tr>';
+                            }
+                        } catch (PDOException $e) {
+                            echo '<tr><td colspan="5" class="text-center text-danger p-3">Erro ao carregar clientes: ' . htmlspecialchars($e->getMessage()) . '</td></tr>';
+                        }
+                    } else {
+                        echo '<tr><td colspan="5" class="text-center text-danger p-3">Erro: Variável de conexão ($conn) não foi encontrada em database/connect.php. Verifique o arquivo connect.php.</td></tr>';
+                    }
+                    ?>
                 </tbody>
             </table>
         </div>
     </div>
+
 </div>
 
-<?php require_once __DIR__ . '/../includes/footer.php'; ?>
+<?php include_once __DIR__ . '/../includes/footer.php'; ?>

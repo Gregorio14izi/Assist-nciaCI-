@@ -1,8 +1,8 @@
 <?php
 // Proteção de acesso restrito
-require_once __DIR__ .  '../login/verifica_user.php';
-require_once __DIR__ .  '../database/connect.php';
-require_once __DIR__ .  '../includes/header.php';
+require_once __DIR__ .  '/../login/verifica_user.php';
+require_once __DIR__ .  '/../database/connect.php';
+require_once __DIR__ .  '/../includes/header.php';
 
 $id = $_GET['id'] ?? null;
 

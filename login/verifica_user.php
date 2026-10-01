@@ -1,13 +1,16 @@
 <?php
-// Inicia a sessão se necessário
-if (session_status() === PHP_SESSION_NONE) {
-    session_start();
-}
+session_start();
+require_once "../database/connect.php"; //
 
-// Verifica se o ID do utilizador está presente na sessão
-if (!isset($_SESSION['usuario_id'])) {
-    // Redireciona o utilizador não autenticado para a página de login
-    header("Location: /projeto_integrador/login/login.php");
+// Exemplo da lógica após consultar o banco:
+if ($usuario_encontrado) {
+    $_SESSION['usuario_id'] = $user['id'];
+    $_SESSION['usuario_nome'] = $user['nome'];
+    
+    // Redireciona para o painel principal
+    header("Location: ../index.php");
+    exit();
+} else {
+    header("Location: login.php?erro=dados_invalidos");
     exit();
 }
-?>

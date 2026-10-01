@@ -58,10 +58,6 @@ require_once __DIR__ . '/../includes/header.php';
                     </div>
                     <button type="submit" class="btn btn-primary w-100">Entrar</button>
                 </form>
-
-                <div class="text-center mt-3">
-                    <a href="<?= BASE_URL; ?>login/cadastrar.php">Novo por aqui? Cadastre-se</a>
-                </div>
             </div>
         </div>
     </div>
