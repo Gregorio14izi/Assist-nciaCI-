@@ -1,7 +1,8 @@
 <?php
-session_start();
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
 
-// Proteção de acesso
 if (!isset($_SESSION['usuario_id'])) {
     header("Location: ../login/login.php");
     exit();
@@ -9,67 +10,59 @@ if (!isset($_SESSION['usuario_id'])) {
 
 require_once __DIR__ . '/../database/connect.php';
 include_once __DIR__ . '/../includes/header.php';
+
+$id = $_GET['id'] ?? null;
+$cliente = null;
+
+if ($id && isset($conn) && $conn !== null) {
+    try {
+        $stmt = $conn->prepare("SELECT * FROM clientes WHERE id = :id");
+        $stmt->bindParam(':id', $id, PDO::PARAM_INT);
+        $stmt->execute();
+        $cliente = $stmt->fetch(PDO::FETCH_ASSOC);
+    } catch (PDOException $e) {
+        $erro = $e->getMessage();
+    }
+}
 ?>
 
 <div class="container my-4">
-
-    <!-- 📌 MURAL DE AVISOS DA ASSISTÊNCIA -->
-    <div class="card mb-4 border-warning shadow-sm">
-        <div class="card-header bg-warning text-dark fw-bold">
-            📌 Mural de Avisos da Assistência
-        </div>
-        <div class="card-body">
-            <ul class="mb-0">
-                <li><strong>Aviso:</strong> Multímetro de bancada #02 está em manutenção.</li>
-                <li><strong>Lembrete:</strong> Verificar estoque de conectores de carga Tipo-C.</li>
-                <li><strong>Entrega urgente:</strong> Notebook Dell do cliente João deve ser testado até às 17h.</li>
-            </ul>
-        </div>
-    </div>
-
-    <!-- TÍTULO E BOTAO NOVO CLIENTE -->
     <div class="d-flex justify-content-between align-items-center mb-3">
-        <h2>Painel Geral de Clientes</h2>
-        <a href="create.php" class="btn btn-success">+ Novo Cliente</a>
+        <h2>Detalhes do Cliente</h2>
+        <a href="select.php" class="btn btn-secondary">Voltar</a>
     </div>
 
-    <!-- TABELA DE CLIENTES -->
-    <div class="card shadow-sm">
-        <div class="card-body p-0">
-            <table class="table table-striped table-hover mb-0">
-                <thead class="table-dark">
-                    <tr>
-                        <th>ID</th>
-                        <th>Nome</th>
-                        <th>E-mail</th>
-                        <th>Telefone</th>
-                        <th>Ações</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <?php
-                    $sql = "SELECT * FROM clientes";
-                    $stmt = $conn->query($sql);
-                    while ($cliente = $stmt->fetch(PDO::FETCH_ASSOC)):
-                    ?>
-                    <tr>
-                        <td><?= $cliente['id']; ?></td>
-                        <td><?= $cliente['nome']; ?></td>
-                        <td><?= $cliente['email']; ?></td>
-                        <td><?= $cliente['telefone']; ?></td>
-                        <td>
-                            <a href="select_where.php?id=<?= $cliente['id']; ?>" class="btn btn-sm btn-info text-white">Ver</a>
-                            <a href="update.php?id=<?= $cliente['id']; ?>" class="btn btn-sm btn-warning text-white">Editar</a>
-                            <a href="delete.php?id=<?= $cliente['id']; ?>" class="btn btn-sm btn-danger">Excluir</a>
-                        </td>
-                    </tr>
-                    <?php endwhile; ?>
-                </tbody>
-            </table>
+    <?php if ($cliente): ?>
+        <div class="card shadow-sm">
+            <div class="card-header bg-primary text-white">
+                <h5 class="mb-0">Cliente #<?= htmlspecialchars($cliente['id']); ?> - <?= htmlspecialchars($cliente['nome']); ?></h5>
+            </div>
+            <div class="card-body">
+                <p><strong>ID:</strong> <?= htmlspecialchars($cliente['id']); ?></p>
+                <p><strong>Nome:</strong> <?= htmlspecialchars($cliente['nome']); ?></p>
+                <p><strong>E-mail:</strong> <?= htmlspecialchars($cliente['email']); ?></p>
+                <p><strong>Telefone:</strong> <?= htmlspecialchars($cliente['telefone'] ?? 'Não informado'); ?></p>
+                <p><strong>📅 Previsão de Retirada:</strong> 
+                    <span class="badge bg-info text-dark fs-6">
+                        <?= !empty($cliente['data_retirada']) ? date('d/m/Y', strtotime($cliente['data_retirada'])) : 'A definir'; ?>
+                    </span>
+                </p>
+                <p><strong>Serviço / Problema:</strong> 
+                    <span class="badge bg-secondary fs-6">
+                        <?= htmlspecialchars($cliente['servico'] ?? 'Não informado'); ?>
+                    </span>
+                </p>
+            </div>
+            <div class="card-footer">
+                <a href="update.php?id=<?= $cliente['id']; ?>" class="btn btn-warning text-white">Editar</a>
+                <a href="delete.php?id=<?= $cliente['id']; ?>" class="btn btn-danger">Excluir</a>
+            </div>
         </div>
-    </div>
-
+    <?php else: ?>
+        <div class="alert alert-warning shadow-sm">
+            Cliente não encontrado ou ID inválido.
+        </div>
+    <?php endif; ?>
 </div>
 
-<?php include_once __DIR__ . '/../includes/footer.php';
- ?>  
+<?php include_once __DIR__ . '/../includes/footer.php'; ?>

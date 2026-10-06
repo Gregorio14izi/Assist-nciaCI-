@@ -1,66 +1,55 @@
 <?php
-require_once __DIR__ . '/../includes/functions.php';
+session_start();
 
-// Trata o Logout se acionado
-if (isset($_GET['action']) && $_GET['action'] === 'logout') {
-    session_destroy();
-    redirecionar(BASE_URL . 'login/login.php');
+// Se o usuário já estiver logado, vai para a página principal
+if (isset($_SESSION['usuario_id'])) {
+    header("Location: ../index.php");
+    exit();
 }
-
-$erro = '';
-
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $email = sanitizarEntrada($_POST['email'] ?? '');
-    $senha = $_POST['senha'] ?? '';
-
-    if (!empty($email) && !empty($senha)) {
-        $stmt = $pdo->prepare("SELECT * FROM usuarios WHERE email = ?");
-        $stmt->execute([$email]);
-        $usuario = $stmt->fetch();
-
-        if ($usuario && password_verify($senha, $usuario['senha'])) {
-            $_SESSION['usuario_id'] = $usuario['id'];
-            $_SESSION['usuario_nome'] = $usuario['nome'];
-            redirecionar(BASE_URL . 'app/select.php');
-        } else {
-            $erro = "E-mail ou senha incorretos.";
-        }
-    } else {
-        $erro = "Preencha todos os campos.";
-    }
-}
-
-require_once __DIR__ . '/../includes/header.php';
 ?>
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Acesso ao Sistema</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="../style/style.css">
+</head>
+<body class="bg-light">
 
-<div class="row justify-content-center my-4">
-    <div class="col-md-5">
-        <div class="card shadow-sm">
-            <div class="card-body p-4">
-                <h3 class="card-title text-center mb-4">Acesso ao Sistema</h3>
+<nav class="navbar navbar-dark bg-primary mb-4">
+  <div class="container-fluid">
+    <a class="navbar-brand fw-bold" href="#">Sistema Clientes</a>
+  </div>
+</nav>
 
-                <?php if (isset($_GET['cadastrado'])): ?>
-                    <?= renderizarAlerta('Cadastro realizado com sucesso! Faça login abaixo.', 'success'); ?>
-                <?php endif; ?>
+<div class="container d-flex justify-content-center align-items-center" style="min-height: 70vh;">
+    <div class="card shadow-sm p-4" style="max-width: 400px; width: 100%;">
+        <h3 class="card-title text-center mb-4">Acesso ao Sistema</h3>
 
-                <?php if (!empty($erro)): ?>
-                    <?= renderizarAlerta($erro, 'danger'); ?>
-                <?php endif; ?>
-
-                <form action="login.php" method="POST">
-                    <div class="mb-3">
-                        <label for="email" class="form-label">E-mail</label>
-                        <input type="email" name="email" id="email" class="form-control" required>
-                    </div>
-                    <div class="mb-3">
-                        <label for="senha" class="form-label">Senha</label>
-                        <input type="password" name="senha" id="senha" class="form-control" required>
-                    </div>
-                    <button type="submit" class="btn btn-primary w-100">Entrar</button>
-                </form>
+        <?php if (isset($_GET['erro']) && $_GET['erro'] == 'dados_invalidos'): ?>
+            <div class="alert alert-danger text-center p-2 mb-3">
+                E-mail ou senha incorretos!
             </div>
-        </div>
+        <?php endif; ?>
+
+        <form action="verifica_user.php" method="POST">
+            <div class="mb-3">
+                <label for="email" class="form-label">E-mail</label>
+                <input type="text" class="form-control" id="email" name="email" required placeholder="Digite seu e-mail">
+            </div>
+            
+            <div class="mb-3">
+                <label for="senha" class="form-label">Senha</label>
+                <input type="password" class="form-control" id="senha" name="senha" required placeholder="Digite sua senha">
+            </div>
+
+            <button type="submit" class="btn btn-primary w-100 fw-bold">Entrar</button>
+        </form>
     </div>
 </div>
 
-<?php require_once __DIR__ . '/../includes/footer.php'; ?>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

@@ -1,21 +1,27 @@
 <?php
-// Garante que só utilizadores logados podem apagar registos
-require_once __DIR__ . '../login/verifica_user.php';
-require_once __DIR__ . '../database/connect.php';
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+
+if (!isset($_SESSION['usuario_id'])) {
+    header("Location: ../login/login.php");
+    exit();
+}
+
+require_once __DIR__ . '/../database/connect.php';
 
 $id = $_GET['id'] ?? null;
 
-if ($id) {
+if ($id && isset($conn)) {
     try {
-        // Executa a exclusão do cliente especificado no PostgreSQL
-        $stmt = $pdo->prepare("DELETE FROM clientes WHERE id = ?");
-        $stmt->execute([$id]);
+        $stmt = $conn->prepare("DELETE FROM clientes WHERE id = :id");
+        $stmt->bindParam(':id', $id, PDO::PARAM_INT);
+        $stmt->execute();
     } catch (PDOException $e) {
-        die("Erro ao excluir o cliente: " . $e->getMessage());
+        // Trata erro de exclusão se houver chave estrangeira vinculada
     }
 }
 
-// Redireciona para a lista geral atualizada
 header("Location: select.php");
 exit();
 ?>

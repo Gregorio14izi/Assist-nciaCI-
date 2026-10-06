@@ -3,38 +3,96 @@ if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 
-// Proteção de acesso: redireciona se o utilizador não estiver autenticado
 if (!isset($_SESSION['usuario_id'])) {
     header("Location: ../login/login.php");
     exit();
 }
 
-// Conexão à base de dados
 require_once __DIR__ . '/../database/connect.php';
 
-// Compatibilidade de nome de variável da conexão
-if (!isset($conn) && isset($pdo)) {
-    $conn = $pdo;
-} elseif (!isset($conn) && isset($conexao)) {
-    $conn = $conexao;
-}
+// Busca dados do Mural
+$mural = ['aviso' => '', 'lembrete' => '', 'urgente' => ''];
+try {
+    $stmtMural = $conn->query("SELECT * FROM mural WHERE id = 1");
+    if ($row = $stmtMural->fetch(PDO::FETCH_ASSOC)) {
+        $mural = $row;
+    }
+} catch (PDOException $e) {}
+
+// Busca os 5 clientes com retirada mais próxima
+$proximosClientes = [];
+try {
+    $stmtProximos = $conn->query("
+        SELECT * FROM clientes 
+        WHERE data_retirada IS NOT NULL AND data_retirada >= CURRENT_DATE 
+        ORDER BY data_retirada ASC 
+        LIMIT 5
+    ");
+    $proximosClientes = $stmtProximos->fetchAll(PDO::FETCH_ASSOC);
+} catch (PDOException $e) {}
 
 include_once __DIR__ . '/../includes/header.php';
 ?>
 
 <div class="container my-4">
 
-    <!-- 📌 MURAL DE AVISOS DA ASSISTÊNCIA -->
+    <!-- 📌 MURAL DE AVISOS EDITÁVEL -->
     <div class="card mb-4 border-warning shadow-sm">
-        <div class="card-header bg-warning text-dark fw-bold">
-            📌 Mural de Avisos da Assistência
+        <div class="card-header bg-warning text-dark fw-bold d-flex justify-content-between align-items-center">
+            <span>📌 Mural de Avisos da Assistência</span>
+            <button class="btn btn-sm btn-dark" data-bs-toggle="modal" data-bs-target="#modalEditarMural">
+                ✏️ Editar Mural
+            </button>
         </div>
         <div class="card-body">
             <ul class="mb-0">
-                <li><strong>Aviso:</strong> Multímetro de bancada #02 está em manutenção.</li>
-                <li><strong>Lembrete:</strong> Verificar estoque de conectores de carga Tipo-C.</li>
-                <li><strong>Entrega urgente:</strong> Notebook Dell do cliente João deve ser testado até às 17h.</li>
+                <li><strong>Aviso:</strong> <?= htmlspecialchars($mural['aviso'] ?: 'Nenhum aviso no momento.'); ?></li>
+                <li><strong>Lembrete:</strong> <?= htmlspecialchars($mural['lembrete'] ?: 'Nenhum lembrete.'); ?></li>
+                <li><strong>Entrega urgente:</strong> <?= htmlspecialchars($mural['urgente'] ?: 'Nenhuma entrega urgente.'); ?></li>
             </ul>
+        </div>
+    </div>
+
+    <!-- ⏰ PRÓXIMAS 5 RETIRADAS -->
+    <div class="card mb-4 border-info shadow-sm">
+        <div class="card-header bg-info text-dark fw-bold">
+            ⏰ Próximas 5 Retiradas Agendadas
+        </div>
+        <div class="card-body p-0">
+            <?php if (!empty($proximosClientes)): ?>
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle mb-0">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Cliente</th>
+                                <th>Telefone</th>
+                                <th>Serviço / Problema</th>
+                                <th class="text-center">📅 Data de Retirada</th>
+                                <th class="text-center">Ação</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <?php foreach ($proximosClientes as $c): ?>
+                                <tr>
+                                    <td class="fw-bold"><?= htmlspecialchars($c['nome']); ?></td>
+                                    <td><?= htmlspecialchars($c['telefone'] ?? 'Sem fone'); ?></td>
+                                    <td><span class="badge bg-secondary"><?= htmlspecialchars($c['servico'] ?? 'N/A'); ?></span></td>
+                                    <td class="text-center">
+                                        <span class="badge bg-warning text-dark fs-6">
+                                            <?= date('d/m/Y', strtotime($c['data_retirada'])); ?>
+                                        </span>
+                                    </td>
+                                    <td class="text-center">
+                                        <a href="select_where.php?id=<?= $c['id']; ?>" class="btn btn-sm btn-outline-primary">Ver</a>
+                                    </td>
+                                </tr>
+                            <?php endforeach; ?>
+                        </tbody>
+                    </table>
+                </div>
+            <?php else: ?>
+                <p class="p-3 mb-0 text-muted">Nenhuma retirada pendente agendada para os próximos dias.</p>
+            <?php endif; ?>
         </div>
     </div>
 
@@ -54,6 +112,8 @@ include_once __DIR__ . '/../includes/header.php';
                         <th>Nome</th>
                         <th>E-mail</th>
                         <th>Telefone</th>
+                        <th>Serviço / Problema</th>
+                        <th class="text-center">📅 Retirada</th>
                         <th class="text-center">Ações</th>
                     </tr>
                 </thead>
@@ -61,17 +121,26 @@ include_once __DIR__ . '/../includes/header.php';
                     <?php
                     if (isset($conn) && $conn !== null) {
                         try {
-                            $sql = "SELECT * FROM clientes";
-                            $stmt = $conn->query($sql);
-                            
+                            $stmt = $conn->query("SELECT * FROM clientes ORDER BY id ASC");
                             if ($stmt && $stmt->rowCount() > 0) {
                                 while ($cliente = $stmt->fetch(PDO::FETCH_ASSOC)) {
+                                    $dataFmt = !empty($cliente['data_retirada']) ? date('d/m/Y', strtotime($cliente['data_retirada'])) : 'A definir';
                                     ?>
                                     <tr>
                                         <td class="text-center"><?= htmlspecialchars($cliente['id']); ?></td>
                                         <td><?= htmlspecialchars($cliente['nome']); ?></td>
                                         <td><?= htmlspecialchars($cliente['email']); ?></td>
-                                        <td><?= htmlspecialchars($cliente['telefone']); ?></td>
+                                        <td><?= htmlspecialchars($cliente['telefone'] ?? ''); ?></td>
+                                        <td>
+                                            <span class="badge bg-secondary text-wrap text-start">
+                                                <?= htmlspecialchars($cliente['servico'] ?? 'Não informado'); ?>
+                                            </span>
+                                        </td>
+                                        <td class="text-center fw-bold">
+                                            <span class="badge bg-info text-dark">
+                                                <?= $dataFmt; ?>
+                                            </span>
+                                        </td>
                                         <td class="text-center">
                                             <a href="select_where.php?id=<?= $cliente['id']; ?>" class="btn btn-sm btn-info text-white">Ver</a>
                                             <a href="update.php?id=<?= $cliente['id']; ?>" class="btn btn-sm btn-warning text-white">Editar</a>
@@ -81,13 +150,13 @@ include_once __DIR__ . '/../includes/header.php';
                                     <?php
                                 }
                             } else {
-                                echo '<tr><td colspan="5" class="text-center p-3">Nenhum cliente cadastrado.</td></tr>';
+                                echo '<tr><td colspan="7" class="text-center p-3">Nenhum cliente cadastrado.</td></tr>';
                             }
                         } catch (PDOException $e) {
-                            echo '<tr><td colspan="5" class="text-center text-danger p-3">Erro ao carregar clientes: ' . htmlspecialchars($e->getMessage()) . '</td></tr>';
+                            echo '<tr><td colspan="7" class="text-center text-danger p-3">Erro ao buscar clientes: ' . htmlspecialchars($e->getMessage()) . '</td></tr>';
                         }
                     } else {
-                        echo '<tr><td colspan="5" class="text-center text-danger p-3">Erro: Variável de conexão ($conn) não foi encontrada em database/connect.php. Verifique o arquivo connect.php.</td></tr>';
+                        echo '<tr><td colspan="7" class="text-center text-danger p-3">Conexão com o banco de dados indisponível.</td></tr>';
                     }
                     ?>
                 </tbody>
@@ -95,6 +164,38 @@ include_once __DIR__ . '/../includes/header.php';
         </div>
     </div>
 
+</div>
+
+<!-- MODAL PARA EDITAR O MURAL -->
+<div class="modal fade" id="modalEditarMural" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <form action="salvar_mural.php" method="POST">
+        <div class="modal-header bg-warning">
+          <h5 class="modal-title fw-bold">Editar Mural de Avisos</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+        </div>
+        <div class="modal-body">
+          <div class="mb-3">
+            <label class="form-label fw-bold">Aviso:</label>
+            <textarea class="form-control" name="aviso" rows="2"><?= htmlspecialchars($mural['aviso']); ?></textarea>
+          </div>
+          <div class="mb-3">
+            <label class="form-label fw-bold">Lembrete:</label>
+            <textarea class="form-control" name="lembrete" rows="2"><?= htmlspecialchars($mural['lembrete']); ?></textarea>
+          </div>
+          <div class="mb-3">
+            <label class="form-label fw-bold">Entrega urgente:</label>
+            <textarea class="form-control" name="urgente" rows="2"><?= htmlspecialchars($mural['urgente']); ?></textarea>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+          <button type="submit" class="btn btn-success fw-bold">Salvar Alterações</button>
+        </div>
+      </form>
+    </div>
+  </div>
 </div>
 
 <?php include_once __DIR__ . '/../includes/footer.php'; ?>

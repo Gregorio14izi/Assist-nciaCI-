@@ -1,40 +1,31 @@
-<?php
-require_once __DIR__ . '/functions.php';
-?>
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="pt-br">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Projeto Integrador</title>
-    <!-- Bootstrap 5 CSS via CDN -->
+    <title>Sistema Clientes - Assistência Técnica</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <!-- CSS Local -->
-    <link rel="stylesheet" href="<?= BASE_URL; ?>style/style.css">
+    <link rel="stylesheet" href="/style/style.css">
+    <!-- Bootstrap 5 CSS -->
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+<!-- CSS Personalizado Único -->
+<?php
+  // Detecta o caminho correto caso a página esteja na raiz ou dentro da pasta /app/
+  $cssPath = file_exists(__DIR__ . '/../assets/css/style.css') ? '../assets/css/style.css' : 'assets/css/style.css';
+?>
+<link rel="stylesheet" href="<?= $cssPath; ?>">
 </head>
-<body class="d-flex flex-column min-vh-100 bg-light">
-    <nav class="navbar navbar-expand-lg navbar-dark bg-primary shadow-sm mb-4">
-        <div class="container">
-            <a class="navbar-brand fw-bold" href="<?= BASE_URL; ?>index.php">Sistema Clientes</a>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav ms-auto">
-                    <li class="nav-item">
-                        <a class="nav-link" href="<?= BASE_URL; ?>index.php">Início</a>
-                    </li>
-                    <?php if (usuarioEstaLogado()): ?>
-                        <li class="nav-item">
-                            <a class="nav-link" href="<?= BASE_URL; ?>app/select.php">Painel Clientes</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-warning" href="<?= BASE_URL; ?>login/login.php?action=logout">Sair</a>
-                        </li>
-                    <?php else: ?>
-                        <li class="nav-item">
-                            <a class="nav-link" href="<?= BASE_URL; ?>login/login.php">Área Restrita</a>
-                        </li>
-                    <?php endif; ?>
-                </ul>
-            </div>
-        </div>
-    </nav>
-    <main class="container flex-grow-1">
+<body>
+
+<nav class="navbar navbar-expand-lg navbar-dark bg-primary mb-4 shadow-sm">
+  <div class="container-fluid">
+    <a class="navbar-brand fw-bold" href="/index.php">Sistema Clientes</a>
+    
+    <div class="d-flex align-items-center">
+      <a class="nav-link text-white me-3" href="/index.php">Início</a>
+      <a class="nav-link text-white me-3" href="/app/select.php">Clientes</a>
+      <a href="/login/logout.php" class="btn btn-outline-light btn-sm">Sair</a>
+    </div>
+  </div>
+</nav>
