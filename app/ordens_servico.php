@@ -10,15 +10,16 @@ if (!isset($_SESSION['usuario_id'])) {
 
 require_once __DIR__ . '/../database/connect.php';
 
-// Cria a coluna status automaticamente caso ela ainda não exista
+// CRIAÇÃO AUTOMÁTICA DA COLUNA STATUS SE NÃO EXISTIR
 try {
     $conn->exec("ALTER TABLE clientes ADD COLUMN IF NOT EXISTS status VARCHAR(50) DEFAULT 'Em Análise'");
-} catch (PDOException $e) {
-    // Silencia caso ocorra algum aviso de coluna já existente
-}
+} catch (PDOException $e) {}
 
 $mensagem = '';
 $tipoMensagem = 'danger';
+
+// Data mínima permitida: amanhã (1 dia de espera no mínimo)
+$dataMinima = date('Y-m-d', strtotime('+1 day'));
 
 // 1. TRATAMENTO DE AÇÕES (CADASTRAR O.S. / ATUALIZAR STATUS)
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -31,50 +32,55 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $data_retirada = !empty($_POST['data_retirada']) ? $_POST['data_retirada'] : null;
         $status = $_POST['status'] ?? 'Em Análise';
 
-        // Caso 1: Escolheu um cliente JÁ EXISTENTE no dropdown
-        if (!empty($cliente_id_existente)) {
-            try {
-                // Atualiza o serviço e a previsão do cliente selecionado
-                $stmt = $conn->prepare("UPDATE clientes SET servico = :servico, data_retirada = :data_retirada, status = :status WHERE id = :id");
-                $stmt->execute([
-                    ':servico' => $servico,
-                    ':data_retirada' => $data_retirada,
-                    ':status' => $status,
-                    ':id' => $cliente_id_existente
-                ]);
-                $mensagem = "Ordem de Serviço vinculada ao cliente existente com sucesso!";
-                $tipoMensagem = "success";
-            } catch (PDOException $e) {
-                $mensagem = "Erro ao vincular O.S.: " . $e->getMessage();
-            }
-        } 
-        // Caso 2: É um CLIENTE NOVO (preencheu nome/telefone manualmente)
-        else {
-            $nome = trim($_POST['nome'] ?? '');
-            $telefone = trim($_POST['telefone'] ?? '');
-
-            if (!empty($nome) && !empty($servico)) {
+        // Validação no servidor: impede salvar datas anteriores ou do próprio dia
+        if (!empty($data_retirada) && $data_retirada < $dataMinima) {
+            $mensagem = "A data de retirada deve ter no mínimo 1 dia de espera (a partir de amanhã).";
+            $tipoMensagem = "danger";
+        } else {
+            // Caso 1: Escolheu cliente existente
+            if (!empty($cliente_id_existente)) {
                 try {
-                    $stmt = $conn->prepare("INSERT INTO clientes (nome, telefone, servico, data_retirada, status) VALUES (:nome, :telefone, :servico, :data_retirada, :status)");
+                    $stmt = $conn->prepare("UPDATE clientes SET servico = :servico, data_retirada = :data_retirada, status = :status WHERE id = :id");
                     $stmt->execute([
-                        ':nome' => $nome,
-                        ':telefone' => $telefone,
                         ':servico' => $servico,
                         ':data_retirada' => $data_retirada,
-                        ':status' => $status
+                        ':status' => $status,
+                        ':id' => $cliente_id_existente
                     ]);
-                    $mensagem = "Novo cliente e Ordem de Serviço cadastrados com sucesso!";
+                    $mensagem = "Ordem de Serviço vinculada ao cliente com sucesso!";
                     $tipoMensagem = "success";
                 } catch (PDOException $e) {
-                    $mensagem = "Erro ao cadastrar O.S.: " . $e->getMessage();
+                    $mensagem = "Erro ao vincular O.S.: " . $e->getMessage();
                 }
-            } else {
-                $mensagem = "Selecione um cliente existente ou preencha o Nome e o Serviço do novo cliente.";
+            } 
+            // Caso 2: Cliente novo
+            else {
+                $nome = trim($_POST['nome'] ?? '');
+                $telefone = trim($_POST['telefone'] ?? '');
+
+                if (!empty($nome) && !empty($servico)) {
+                    try {
+                        $stmt = $conn->prepare("INSERT INTO clientes (nome, telefone, servico, data_retirada, status) VALUES (:nome, :telefone, :servico, :data_retirada, :status)");
+                        $stmt->execute([
+                            ':nome' => $nome,
+                            ':telefone' => $telefone,
+                            ':servico' => $servico,
+                            ':data_retirada' => $data_retirada,
+                            ':status' => $status
+                        ]);
+                        $mensagem = "Novo cliente e Ordem de Serviço cadastrados com sucesso!";
+                        $tipoMensagem = "success";
+                    } catch (PDOException $e) {
+                        $mensagem = "Erro ao cadastrar O.S.: " . $e->getMessage();
+                    }
+                } else {
+                    $mensagem = "Selecione um cliente existente ou preencha o Nome e o Serviço do novo cliente.";
+                }
             }
         }
     }
 
-    // ATUALIZAR STATUS DA O.S. (ALTERAÇÃO DIRETA NA TABELA)
+    // ATUALIZAR STATUS DA O.S.
     elseif ($acao === 'atualizar_status' && isset($_POST['cliente_id'], $_POST['novo_status'])) {
         try {
             $stmt = $conn->prepare("UPDATE clientes SET status = :status WHERE id = :id");
@@ -90,7 +96,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 }
 
-// 2. BUSCAR TODOS OS CLIENTES PARA O DROPDOWN E PARA A TABELA
+// 2. BUSCAR TODOS OS CLIENTES
 $todosClientes = [];
 try {
     $stmt = $conn->query("SELECT * FROM clientes ORDER BY id DESC");
@@ -215,8 +221,15 @@ include_once __DIR__ . '/../includes/header.php';
             <textarea class="form-control" name="servico" rows="3" placeholder="Ex: Notebook Dell - Formatação e limpeza interna" required></textarea>
           </div>
           <div class="mb-3">
-            <label class="form-label fw-bold">Previsão de Retirada</label>
-            <input type="date" class="form-control" name="data_retirada">
+            <label class="form-label fw-bold">Previsão de Retirada (Mínimo 1 dia de espera) *</label>
+            <!-- O atributo min bloqueia no calendário do navegador qualquer dia anterior a amanhã -->
+            <input 
+              type="date" 
+              class="form-control" 
+              name="data_retirada" 
+              min="<?= date('Y-m-d', strtotime('+1 day')); ?>"
+              required
+            >
           </div>
           <div class="mb-3">
             <label class="form-label fw-bold">Status Inicial</label>

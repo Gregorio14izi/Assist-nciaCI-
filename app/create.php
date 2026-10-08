@@ -120,7 +120,13 @@ $categorias = [
                     </div>
                     <div class="col-md-3">
                         <label for="data_retirada" class="form-label">📅 Previsão de Retirada</label>
-                        <input type="date" class="form-control" id="data_retirada" name="data_retirada">
+                        <input 
+                            type="date" 
+                            name="data_retirada" 
+                            class="form-control" 
+                            min="<?= date('Y-m-d', strtotime('+1 day')); ?>" 
+                            required
+                            >
                     </div>
                 </div>
 

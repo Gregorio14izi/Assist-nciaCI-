@@ -78,9 +78,13 @@ include_once __DIR__ . '/../includes/header.php';
                                     <td><?= htmlspecialchars($c['telefone'] ?? 'Sem fone'); ?></td>
                                     <td><span class="badge bg-secondary"><?= htmlspecialchars($c['servico'] ?? 'N/A'); ?></span></td>
                                     <td class="text-center">
-                                        <span class="badge bg-warning text-dark fs-6">
-                                            <?= date('d/m/Y', strtotime($c['data_retirada'])); ?>
-                                        </span>
+                                        <?php if (!empty($c['data_retirada'])): ?>
+                                            <span class="badge bg-warning text-dark fs-6">
+                                                 <?= date('d/m/Y', strtotime($c['data_retirada'])); ?>
+                                            </span>
+                                        <?php else: ?>  
+                                            <span class="badge bg-secondary fs-6">Sem data</span>
+                                        <?php endif; ?>
                                     </td>
                                     <td class="text-center">
                                         <a href="select_where.php?id=<?= $c['id']; ?>" class="btn btn-sm btn-outline-primary">Ver</a>
