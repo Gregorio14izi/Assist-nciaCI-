@@ -1,35 +1,40 @@
 <?php
-session_start();
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+
 require_once __DIR__ . '/../database/connect.php';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $email = $_POST['email'] ?? '';
+    $email = filter_input(INPUT_POST, 'email', FILTER_VALIDATE_EMAIL);
     $senha = $_POST['senha'] ?? '';
 
-    if (!empty($email) && !empty($senha)) {
+    if ($email && !empty($senha)) {
         try {
-            $stmt = $conn->prepare("SELECT * FROM usuarios WHERE email = :email LIMIT 1");
-            $stmt->bindParam(':email', $email);
+            // Consulta o utilizador no PostgreSQL
+            $stmt = $pdo->prepare("SELECT * FROM usuarios WHERE email = :email LIMIT 1");
+            $stmt->bindValue(':email', $email);
             $stmt->execute();
-            $user = $stmt->fetch();
+            $usuario = $stmt->fetch(PDO::FETCH_ASSOC);
 
-            if ($user && (password_verify($senha, $user['senha']) || $senha === $user['senha'])) {
-                $_SESSION['usuario_id'] = $user['id'];
-                $_SESSION['usuario_nome'] = $user['nome'] ?? $user['email'];
+            // Verifica a palavra-passe (suporta hash seguro ou verificação direta)
+            if ($usuario && (password_verify($senha, $usuario['senha']) || $senha === $usuario['senha'])) {
+                $_SESSION['usuario_id'] = $usuario['id'];
+                $_SESSION['usuario_nome'] = $usuario['nome'] ?? 'Administrador';
 
-                header("Location: ../index.php");
+                // Redireciona para o painel de gestão na pasta app/
+                header("Location: ../app/select.php");
                 exit();
             }
         } catch (PDOException $e) {
-            // Em caso de exceção na busca do usuário
+            // Caso aconteça algum erro de banco de dados
+            header("Location: login.php?erro=dados_invalidos");
+            exit();
         }
     }
-
-    // Redireciona de volta para a tela de login na mesma pasta
-    header("Location: login.php?erro=dados_invalidos");
-    exit();
-} else {
-    header("Location: login.php");
-    exit();
 }
+
+// Se os dados estiverem incorretos, volta para o ecrã de login
+header("Location: login.php?erro=dados_invalidos");
+exit();
 ?>

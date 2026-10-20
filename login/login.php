@@ -11,7 +11,7 @@ if (isset($_SESSION['usuario_id'])) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Acesso ao Sistema - TechFix</title>
+    <title>Acesso ao Sistema - AssistêciaCi</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="../assets/css/style.css">
 </head>
@@ -20,14 +20,14 @@ if (isset($_SESSION['usuario_id'])) {
 <header>
   <nav class="navbar navbar-dark bg-dark mb-4 shadow-sm">
     <div class="container">
-      <a class="navbar-brand fw-bold" href="../index.php">🛠️ TechFix - Sistema Clientes</a>
+      <a class="navbar-brand fw-bold" href="../index.php">🛠️ AssistênciaCi - A melhor assitência técnica da Ilha de Marajó</a>
     </div>
   </nav>
 </header>
 
 <main class="container d-flex justify-content-center align-items-center flex-grow-1">
     <div class="card shadow-sm p-4" style="max-width: 400px; width: 100%;">
-        <h1 class="h3 card-title text-center mb-4">Acesso ao Sistema</h1>
+        <h1 class="h3 card-title text-center mb-4">Acesso do lojista ao Sistema</h1>
 
         <?php if (isset($_GET['erro']) && $_GET['erro'] == 'dados_invalidos'): ?>
             <div class="alert alert-danger text-center p-2 mb-3" role="alert">

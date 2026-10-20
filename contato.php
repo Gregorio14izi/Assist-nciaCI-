@@ -1,19 +1,22 @@
 <?php
-session_start();
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
 include_once __DIR__ . '/includes/header.php';
 ?>
 
 <main class="container my-5">
     <section class="row g-4">
-        <article class="col-md-7">
-            <div class="card shadow-sm p-4">
-                <h1 class="h3 mb-3">Fale Conosco</h1>
-                <p class="text-muted">Preencha o formulário abaixo para tirar dúvidas ou solicitar um orçamento prévio.</p>
+        <!-- Formulário de Contato -->
+        <article class="col-lg-7">
+            <div class="card shadow-sm p-4 border-0">
+                <h1 class="h3 fw-bold mb-3">Fale Conosco</h1>
+                <p class="text-muted mb-4">Preencha o formulário abaixo para tirar dúvidas, solicitar orçamentos ou acompanhar o estado do seu equipamento.</p>
 
-                <form action="#" method="POST" onsubmit="alert('Mensagem enviada com sucesso!'); return false;">
+                <form action="#" method="POST" onsubmit="alert('Mensagem enviada com sucesso! Entraremos em contacto brevemente.'); return false;">
                     <div class="mb-3">
                         <label for="nome_contato" class="form-label fw-bold">Nome Completo *</label>
-                        <input type="text" id="nome_contato" name="nome" class="form-control" placeholder="Digite seu nome completo" required>
+                        <input type="text" id="nome_contato" name="nome" class="form-control" placeholder="Digite o seu nome completo" required>
                     </div>
 
                     <div class="mb-3">
@@ -27,32 +30,30 @@ include_once __DIR__ . '/includes/header.php';
                     </div>
 
                     <div class="mb-3">
-                        <label for="mensagem_contato" class="form-label fw-bold">Mensagem *</label>
-                        <textarea id="mensagem_contato" name="mensagem" class="form-control" rows="4" placeholder="Descreva sua dúvida ou o equipamento com problema..." required></textarea>
+                        <label for="mensagem_contato" class="form-label fw-bold">Mensagem / Equipamento *</label>
+                        <textarea id="mensagem_contato" name="mensagem" class="form-control" rows="4" placeholder="Descreva o modelo do seu equipamento e o problema apresentado..." required></textarea>
                     </div>
 
-                    <button type="submit" class="btn btn-primary fw-bold w-100">Enviar Mensagem</button>
+                    <button type="submit" class="btn btn-warning fw-bold text-dark w-100">Enviar Mensagem</button>
                 </form>
             </div>
         </article>
 
-        <aside class="col-md-5">
-            <div class="card shadow-sm p-4 mb-4 bg-light border-0">
-                <h2 class="h4 mb-3">📍 Dados da Loja</h2>
-                <ul class="list-unstyled">
-                    <li class="mb-2"><strong>Endereço:</strong> Av. Principal, nº 1000 - Centro</li>
-                    <li class="mb-2"><strong>Telefone:</strong> (11) 3333-4444</li>
-                    <li class="mb-2"><strong>WhatsApp:</strong> (11) 98888-7777</li>
-                    <li class="mb-2"><strong>E-mail:</strong> contato@techfix.com.br</li>
+        <!-- Informações e Imagem Institucional -->
+        <aside class="col-lg-5">
+            <div class="card shadow-sm p-4 mb-4 bg-dark text-light border-0">
+                <h2 class="h4 fw-bold text-warning mb-3">📍 AssistênciaCi</h2>
+                <ul class="list-unstyled mb-0">
+                    <li class="mb-2"><strong>Endereço:</strong> Av. Principal das Tecnologias, 1000 - Centro</li>
+                    <li class="mb-2"><strong>Atendimento:</strong> Segunda a Sexta, das 08h00 às 18h00</li>
+                    <li class="mb-2"><strong>Sábados:</strong> das 08h00 às 12h00</li>
+                    <li class="mb-2"><strong>E-mail:</strong> contato@assistenciaci.com.br</li>
+                    <li><strong>Telefone/WhatsApp:</strong> (11) 99999-8888</li>
                 </ul>
-                <hr>
-                <h3 class="h5 mb-2">⏰ Horário de Atendimento</h3>
-                <p class="mb-1"><strong>Segunda a Sexta:</strong> 08:00 às 18:00</p>
-                <p class="mb-0"><strong>Sábado:</strong> 08:00 às 12:00</p>
             </div>
 
             <div class="text-center">
-                <img src="assets/img/atendimento.svg" alt="Atendimento ao cliente e recepção da loja TechFix" class="img-fluid rounded shadow-sm">
+                <img src="<?= $baseUrl; ?>assets/img/atendimento.svg" alt="Atendimento ao cliente e recepção da loja AssistênciaCi" class="img-fluid rounded shadow-sm w-100">
             </div>
         </aside>
     </section>
