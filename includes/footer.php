@@ -1,6 +1,7 @@
-<footer class="text-center py-4 text-muted border-top mt-5">
-    <div class="container">
-        &copy; <?= date('Y'); ?> Projeto Integrador - Todos os direitos reservados.
+<footer class="bg-dark text-light py-4 border-top mt-5">
+    <div class="container text-center">
+        <p class="mb-1">&copy; <?= date('Y'); ?> AssistênciaCi Assistência Técnica - Todos os direitos reservados.</p>
+        <small class="text-muted">Desenvolvido como Projeto Integrador para os cursos de Desenvolvimento Web (PHP) e LIMA (HTML5).</small>
     </div>
 </footer>
 

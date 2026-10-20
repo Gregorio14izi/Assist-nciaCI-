@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="220" height="50" viewBox="0 0 220 50">
+    <rect width="100%" height="100%" fill="#212529" rx="8" />
+    <text x="15" y="33" font-family="&#39;Segoe UI&#39;, Roboto, sans-serif" font-size="20" font-weight="bold">
+        <tspan fill="#ffc107">🛠️ Assistência</tspan><tspan fill="#ffffff">Ci</tspan>
+    </text>
+</svg>
