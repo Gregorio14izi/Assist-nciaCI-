@@ -13,7 +13,7 @@
 
 ### Dentro do MobaxTerm pimeiro passo é fazer: 
 
-```mermaid
+```markdown
 ```bash
 git clone https://github.com/Gregorio14izi/projeto_integrador
 ```
