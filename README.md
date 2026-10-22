@@ -93,8 +93,9 @@ Este guia prático foi elaborado para orientar o proprietário da assistência o
 1. Abra o navegador web (Google Chrome, Firefox, Edge ou Safari).
 2. Digite o endereço do sistema (ex.: `http://localhost:8000/index.php` ou o domínio do seu servidor).
 3. No menu superior da página, clique no botão amarelo **Área Restrita / Login**.
-4. Insira o e-mail cadastrado (`adm@adm.com`) e a senha (`adm123`).
-5. Clique em **Entrar**. O sistema redirecionará para a tela principal do painel administrativo (`app/select.php`).
+4. Para cadastrar o email de administrador, escreva "setup.php" logo após de "projeto_integrador" (http://192.168.10.24/projeto_integrador/* a onde está o asterisco)
+5. Insira o e-mail cadastrado (`adm@adm.com`) e a senha (`adm123`).
+6. Clique em **Entrar**. O sistema redirecionará para a tela principal do painel administrativo (`app/select.php`).
 
 ### 1.6 Fluxo Completo de Entrada de Equipamento (Nova O.S.)
 1. No painel administrativo, clique no botão **Novo Cadastro / Registrar O.S.** (`app/create.php`).
