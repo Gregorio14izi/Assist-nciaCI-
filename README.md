@@ -19,13 +19,13 @@ git clone https://github.com/Gregorio14izi/projeto_integrador
 
 ## Depois entrar no postgres para criar o banco, e em seguida escrever:
 
-```mermaid
+```markdown
 CREATE DATABASE projeto_integrador;
 ```
 
 ## O terceiro passo é criar as seguintes tabelas: 
 
-```mermaid
+```markdown
 CREATE TABLE public.clientes (
     id integer NOT NULL,
     nome character varying(100) NOT NULL,
