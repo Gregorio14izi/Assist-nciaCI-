@@ -16,10 +16,8 @@
 - **Senha de Acesso:** `adm123`
 - **Nível de Permissão:** Administrador Geral / Técnico de Bancada
 
-### 1.2 Links Oficiais, Repositório e Histórico
-- **Histórico de Prompting (Gemini AI):** [Acessar Histórico do Prompt](https://gemini.google.com/share/d/1Q3Co3QRE4-btWaFgpMq0IkcRZLLiZM50?usp=sharing)
+### 1.2 Link do repositório oficial
 - **Repositório Oficial no GitHub:** [GitHub - Assist-nciaCI-](https://github.com/Gregorio14izi/Assist-nciaCI-)
-- **Pasta Raiz do Projeto Local:** `projeto_integrador`
 
 ### 1.3 Identidade Visual e Paleta de Cores
 - **Cor Primária / Destaque (Amarelo Ouro):** `#ffc107` (Aplicações em botões principais, realces e ícones de marca).
