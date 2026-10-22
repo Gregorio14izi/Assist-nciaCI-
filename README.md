@@ -81,14 +81,10 @@
    ```
 
 ### 1.4 Execução via Servidor PHP Embutido
-1. Dentro da pasta `projeto_integrador`, inicie o servidor embutido na porta `8000`:
+#### Dentro da pasta `projeto_integrador`, inicie o servidor embutido na porta `8000`:
    ```bash
    php -S localhost:8000
    ```
-2. Abra o navegador e acesse:
-   - **Website Público:** `http://localhost:8000/index.php`
-   - **Painel Administrativo:** `http://localhost:8000/login/login.php`
-
 ---
 Depois de criado o banco com as tabelas o site funciona perfeitamente (na teoria).
 Este guia prático foi elaborado para orientar o proprietário da assistência ou os técnicos de bancada na operação diária do site.
