@@ -11,8 +11,20 @@
 
 ## 1.0 Guia Operacional Passo a Passo (Manual Completo do Proprietário)
 
-### Dentro do MobaxTerm pimeiro passo é fazer: git clone https://github.com/Gregorio14izi/projeto_integrador
-## O segundo passo é fazer as tabelas: 
+### Dentro do MobaxTerm pimeiro passo é fazer: 
+
+```mermaid
+git clone https://github.com/Gregorio14izi/projeto_integrador
+```
+
+## Depois entrar no postgres para criar o banco, e em seguida escrever:
+
+```mermaid
+CREATE DATABASE projeto_integrador;
+```
+
+## O terceiro passo é criar as seguintes tabelas: 
+
 ```mermaid
 CREATE TABLE public.clientes (
     id integer NOT NULL,
@@ -24,9 +36,25 @@ CREATE TABLE public.clientes (
     data_retirada date,
     status character varying(50) DEFAULT 'Em Análise'::character varying
 );
-```
 
-Este guia prático foi elaborado para orientar o proprietário da assistência ou os técnicos de bancada na operação diária do sistema.
+CREATE TABLE public.ferramentas (
+    id integer NOT NULL,
+    nome character varying(100) NOT NULL,
+    categoria character varying(50) NOT NULL,
+    quantidade integer DEFAULT 1 NOT NULL,
+    estado character varying(50) DEFAULT 'Bom Estado'::character varying,
+    created_at timestamp without time zone DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE public.usuarios (
+    id integer NOT NULL,
+    nome character varying(100) NOT NULL,
+    email character varying(100) NOT NULL,
+    senha character varying(255) NOT NULL
+);
+```
+Depois de criado o banco com as tabelas o site funciona perfeitamente (na teoria).
+Este guia prático foi elaborado para orientar o proprietário da assistência ou os técnicos de bancada na operação diária do site.
 
 ### 1.1 Início de Expediente e Autenticação no Sistema
 1. Abra o navegador web (Google Chrome, Firefox, Edge ou Safari).
