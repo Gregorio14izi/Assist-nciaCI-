@@ -11,6 +11,21 @@
 
 ## 1.0 Guia Operacional Passo a Passo (Manual Completo do Proprietário)
 
+### Dentro do MobaxTerm pimeiro passo é fazer: git clone https://github.com/Gregorio14izi/projeto_integrador
+## O segundo passo é fazer as tabelas: 
+```mermaid
+CREATE TABLE public.clientes (
+    id integer NOT NULL,
+    nome character varying(100) NOT NULL,
+    email character varying(100) NOT NULL,
+    telefone character varying(20) NOT NULL,
+    criado_em timestamp without time zone DEFAULT CURRENT_TIMESTAMP,
+    servico text,
+    data_retirada date,
+    status character varying(50) DEFAULT 'Em Análise'::character varying
+);
+```
+
 Este guia prático foi elaborado para orientar o proprietário da assistência ou os técnicos de bancada na operação diária do sistema.
 
 ### 1.1 Início de Expediente e Autenticação no Sistema
