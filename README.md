@@ -11,59 +11,96 @@
 
 ## 1.0 Guia Operacional Passo a Passo (Manual Completo do Proprietário)
 
-### Dentro do MobaxTerm pimeiro passo é fazer: 
+### 1.1 Requisitos Mínimos do Sistema
+1. **Servidor Web / Interpretador:** PHP na versão `8.0` ou superior.
+2. **Sistema Gerenciador de Banco de Dados:** PostgreSQL `12.0` ou superior.
+3. **Extensão PHP Ativa:** `pdo_pgsql` liberada no arquivo `php.ini`.
+4. **Navegador Web Suportado:** Google Chrome, Mozilla Firefox, Microsoft Edge ou Safari atualizados.
 
-```markdown
-git clone https://github.com/Gregorio14izi/projeto_integrador
-```
+### 1.2 Instalação e Configuração do Banco PostgreSQL
+1. Abra o gerenciador do PostgreSQL (pgAdmin ou terminal psql).
+2. Crie um novo banco de dados chamado `projeto_integrador`:
+   ```sql
+   CREATE DATABASE projeto_integrador;
+   ```
+3. Execute o script de criação das tabelas e carga inicial de dados:
+   ```sql
+   -- Tabela de Usuários
+   CREATE TABLE usuarios (
+       id SERIAL PRIMARY KEY,
+       nome VARCHAR(100) NOT NULL,
+       email VARCHAR(100) UNIQUE NOT NULL,
+       senha VARCHAR(255) NOT NULL
+   );
 
-## Depois entrar no postgres para criar o banco, e em seguida escrever:
+   -- Inserção do Administrador Padrão
+   INSERT INTO usuarios (nome, email, senha) 
+   VALUES ('Administrador', 'adm@adm.com', 'adm123');
 
-```markdown
-CREATE DATABASE projeto_integrador;
-```
+   -- Tabela de Clientes e Ordens de Serviço
+   CREATE TABLE clientes (
+       id SERIAL PRIMARY KEY,
+       nome VARCHAR(100) NOT NULL,
+       telefone VARCHAR(20) NOT NULL,
+       servico TEXT NOT NULL,
+       data_entrega DATE NOT NULL,
+       status VARCHAR(50) DEFAULT 'Em Análise',
+       data_cadastro TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+   );
 
-## O terceiro passo é criar as seguintes tabelas: 
+   -- Tabela do Inventário de Ferramentas
+   CREATE TABLE ferramentas (
+       id SERIAL PRIMARY KEY,
+       nome_ferramenta VARCHAR(100) NOT NULL,
+       quantidade INT NOT NULL DEFAULT 1,
+       estado_conservacao VARCHAR(50) NOT NULL
+   );
 
-```markdown
-CREATE TABLE public.clientes (
-    id integer NOT NULL,
-    nome character varying(100) NOT NULL,
-    email character varying(100) NOT NULL,
-    telefone character varying(20) NOT NULL,
-    criado_em timestamp without time zone DEFAULT CURRENT_TIMESTAMP,
-    servico text,
-    data_retirada date,
-    status character varying(50) DEFAULT 'Em Análise'::character varying
-);
+   -- Tabela do Mural de Avisos
+   CREATE TABLE mural (
+       id SERIAL PRIMARY KEY,
+       conteudo TEXT NOT NULL,
+       data_atualizacao TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+   );
+   ```
 
-CREATE TABLE public.ferramentas (
-    id integer NOT NULL,
-    nome character varying(100) NOT NULL,
-    categoria character varying(50) NOT NULL,
-    quantidade integer DEFAULT 1 NOT NULL,
-    estado character varying(50) DEFAULT 'Bom Estado'::character varying,
-    created_at timestamp without time zone DEFAULT CURRENT_TIMESTAMP
-);
+### 1.3 Clonagem do Repositório e Configuração Local
+1. Abra o terminal ou prompt de comando na pasta desejada.
+2. Execute o comando de clonagem:
+   ```bash
+   git clone [https://github.com/Gregorio14izi/Assist-nciaCI-.git](https://github.com/Gregorio14izi/Assist-nciaCI-.git) projeto_integrador
+   cd projeto_integrador
+   ```
+3. Abra o arquivo `database/connect.php` e ajuste os dados da sua conexão local com o PostgreSQL:
+   ```php
+   $host   = '127.0.0.1';
+   $port   = '5432';
+   $dbname = 'projeto_integrador';
+   $user   = 'postgres'; // Seu usuário do PostgreSQL
+   $pass   = 'sua_senha'; // Sua senha do PostgreSQL
+   ```
 
-CREATE TABLE public.usuarios (
-    id integer NOT NULL,
-    nome character varying(100) NOT NULL,
-    email character varying(100) NOT NULL,
-    senha character varying(255) NOT NULL
-);
-```
+### 1.4 Execução via Servidor PHP Embutido
+1. Dentro da pasta `projeto_integrador`, inicie o servidor embutido na porta `8000`:
+   ```bash
+   php -S localhost:8000
+   ```
+2. Abra o navegador e acesse:
+   - **Website Público:** `http://localhost:8000/index.php`
+   - **Painel Administrativo:** `http://localhost:8000/login/login.php`
+
+---
 Depois de criado o banco com as tabelas o site funciona perfeitamente (na teoria).
 Este guia prático foi elaborado para orientar o proprietário da assistência ou os técnicos de bancada na operação diária do site.
 
-### 1.1 Início de Expediente e Autenticação no Sistema
+### 1.5 Início de Expediente e Autenticação no Sistema
 1. Abra o navegador web (Google Chrome, Firefox, Edge ou Safari).
 2. Digite o endereço do sistema (ex.: `http://localhost:8000/index.php` ou o domínio do seu servidor).
 3. No menu superior da página, clique no botão amarelo **Área Restrita / Login**.
 4. Insira o e-mail cadastrado (`adm@adm.com`) e a senha (`adm123`).
 5. Clique em **Entrar**. O sistema redirecionará para a tela principal do painel administrativo (`app/select.php`).
 
-### 1.2 Fluxo Completo de Entrada de Equipamento (Nova O.S.)
+### 1.6 Fluxo Completo de Entrada de Equipamento (Nova O.S.)
 1. No painel administrativo, clique no botão **Novo Cadastro / Registrar O.S.** (`app/create.php`).
 2. **Preenchimento de Dados do Cliente:**
    - **Nome do Cliente:** Digite o nome completo do proprietário.
@@ -74,7 +111,7 @@ Este guia prático foi elaborado para orientar o proprietário da assistência o
    - **Seletor de Data:** Escolha a data prevista para entrega. O sistema **bloqueará automaticamente** a escolha do dia de hoje ou dias anteriores, garantindo o prazo técnico mínimo de 24 horas.
 5. Clique em **Salvar Registro**. A nova Ordem de Serviço será criada com o status inicial `Em Análise`.
 
-### 1.3 Fluxo de Acompanhamento e Atualização de Status da Bancada
+### 1.7 Fluxo de Acompanhamento e Atualização de Status da Bancada
 1. Acesse o painel geral (`app/select.php`).
 2. Localize a O.S. pelo nome do cliente ou pelo número do ID.
 3. Clique no botão **Editar / Atualizar** (`app/update.php`).
@@ -86,23 +123,23 @@ Este guia prático foi elaborado para orientar o proprietário da assistência o
    - **Entregue:** O equipamento foi devolvido e o valor foi quitado.
 5. Clique em **Salvar Alterações** para registrar o novo estado no banco de dados.
 
-### 1.4 Fluxo de Entrega do Aparelho e Finalização da O.S.
+### 1.8 Fluxo de Entrega do Aparelho e Finalização da O.S.
 1. Quando o cliente chegar à loja para retirar o aparelho, localize a O.S. no painel.
 2. Altere o status para `Entregue`.
 3. Caso necessite remover o registro do histórico ativo, clique em **Excluir** e confirme a operação na caixa de diálogo de segurança.
 
-### 1.5 Operação do Estoque de Ferramentas da Oficina
+### 1.9 Operação do Estoque de Ferramentas da Oficina
 1. No menu superior do painel administrativo, clique na aba **Ferramentas** (`app/ferramentas.php`).
 2. **Para adicionar um novo item:** Preencha o nome da ferramenta (ex.: *"Manta Térmica Anti-Estática"*), a quantidade inicial e escolha o estado de conservação.
 3. **Para ajustar a quantidade:** Utilize os botões rápidos de soma (`+`) ou subtração (`-`) para registrar novos itens comprados ou quebrados.
 4. **Para registrar manutenção de equipamentos:** Altere o estado de conservação para `Necessita Manutenção` para evitar que outro técnico utilize uma ferramenta defeituosa.
 
-### 1.6 Publicação de Lembretes no Mural de Bancada
+### 1.10 Publicação de Lembretes no Mural de Bancada
 1. No painel principal, navegue até a área do **Mural de Avisos**.
 2. Digite o comunicado desejado (ex.: *"Atenção equipe: Chegada de novo lote de baterias no período da tarde"*).
 3. Clique em **Salvar Recado**. O aviso ficará visível no painel administrativo e na página inicial do site para toda a equipe.
 
-### 1.7 Encerramento Seguro de Sessão (Logout)
+### 1.11 Encerramento Seguro de Sessão (Logout)
 1. Ao sair do computador da recepção ou da bancada, clique no botão vermelho **Sair** no canto superior direito.
 2. A sessão de usuário será encerrada imediatamente, protegendo os dados dos clientes contra acessos não autorizados.
 
@@ -425,89 +462,7 @@ projeto_integrador/
 
 ---
 
-## 7.0 Guia Completo de Instalação, Configuração e Execução Local
-
-### 7.1 Requisitos Mínimos do Sistema
-1. **Servidor Web / Interpretador:** PHP na versão `8.0` ou superior.
-2. **Sistema Gerenciador de Banco de Dados:** PostgreSQL `12.0` ou superior.
-3. **Extensão PHP Ativa:** `pdo_pgsql` liberada no arquivo `php.ini`.
-4. **Navegador Web Suportado:** Google Chrome, Mozilla Firefox, Microsoft Edge ou Safari atualizados.
-
-### 7.2 Instalação e Configuração do Banco PostgreSQL
-1. Abra o gerenciador do PostgreSQL (pgAdmin ou terminal psql).
-2. Crie um novo banco de dados chamado `projeto_integrador`:
-   ```sql
-   CREATE DATABASE projeto_integrador;
-   ```
-3. Execute o script de criação das tabelas e carga inicial de dados:
-   ```sql
-   -- Tabela de Usuários
-   CREATE TABLE usuarios (
-       id SERIAL PRIMARY KEY,
-       nome VARCHAR(100) NOT NULL,
-       email VARCHAR(100) UNIQUE NOT NULL,
-       senha VARCHAR(255) NOT NULL
-   );
-
-   -- Inserção do Administrador Padrão
-   INSERT INTO usuarios (nome, email, senha) 
-   VALUES ('Administrador', 'adm@adm.com', 'adm123');
-
-   -- Tabela de Clientes e Ordens de Serviço
-   CREATE TABLE clientes (
-       id SERIAL PRIMARY KEY,
-       nome VARCHAR(100) NOT NULL,
-       telefone VARCHAR(20) NOT NULL,
-       servico TEXT NOT NULL,
-       data_entrega DATE NOT NULL,
-       status VARCHAR(50) DEFAULT 'Em Análise',
-       data_cadastro TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-   );
-
-   -- Tabela do Inventário de Ferramentas
-   CREATE TABLE ferramentas (
-       id SERIAL PRIMARY KEY,
-       nome_ferramenta VARCHAR(100) NOT NULL,
-       quantidade INT NOT NULL DEFAULT 1,
-       estado_conservacao VARCHAR(50) NOT NULL
-   );
-
-   -- Tabela do Mural de Avisos
-   CREATE TABLE mural (
-       id SERIAL PRIMARY KEY,
-       conteudo TEXT NOT NULL,
-       data_atualizacao TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-   );
-   ```
-
-### 7.3 Clonagem do Repositório e Configuração Local
-1. Abra o terminal ou prompt de comando na pasta desejada.
-2. Execute o comando de clonagem:
-   ```bash
-   git clone [https://github.com/Gregorio14izi/Assist-nciaCI-.git](https://github.com/Gregorio14izi/Assist-nciaCI-.git) projeto_integrador
-   cd projeto_integrador
-   ```
-3. Abra o arquivo `database/connect.php` e ajuste os dados da sua conexão local com o PostgreSQL:
-   ```php
-   $host   = '127.0.0.1';
-   $port   = '5432';
-   $dbname = 'projeto_integrador';
-   $user   = 'postgres'; // Seu usuário do PostgreSQL
-   $pass   = 'sua_senha'; // Sua senha do PostgreSQL
-   ```
-
-### 7.4 Execução via Servidor PHP Embutido
-1. Dentro da pasta `projeto_integrador`, inicie o servidor embutido na porta `8000`:
-   ```bash
-   php -S localhost:8000
-   ```
-2. Abra o navegador e acesse:
-   - **Website Público:** `http://localhost:8000/index.php`
-   - **Painel Administrativo:** `http://localhost:8000/login/login.php`
-
----
-
-## 8.0 Matriz de Rastreabilidade e Critérios Avaliativos
+## 7.0 Matriz de Rastreabilidade e Critérios Avaliativos
 
 | Nº | Critério Avaliativo | Módulo | Descrição Completa do Atendimento | Status |
 | :-: | :--- | :---: | :--- | :-: |
@@ -521,16 +476,16 @@ projeto_integrador/
 
 ---
 
-## 9.0 Troubleshooting e Resolução de Problemas Frequentes
+## 8.0 Troubleshooting e Resolução de Problemas Frequentes
 
-### 9.1 Erro de Conexão com o Banco de Dados (`PDOException`)
+### 8.1 Erro de Conexão com o Banco de Dados (`PDOException`)
 - **Sintoma:** O navegador exibe a mensagem *"Fatal Error: Could not connect to database"*.
 - **Causa:** As credenciais no arquivo `database/connect.php` não correspondem ao seu PostgreSQL local ou o serviço do PostgreSQL está parado.
 - **Solução:**
   1. Verifique se o serviço do PostgreSQL está rodando no Windows/Linux.
   2. Abra o arquivo `database/connect.php` e confirme o nome da porta (padrão `5432`), nome do banco (`projeto_integrador`), usuário e senha.
 
-### 9.2 Erro 404 (Not Found) ao Executar o Servidor PHP
+### 8.2 Erro 404 (Not Found) ao Executar o Servidor PHP
 - **Sintoma:** Ao tentar acessar `http://localhost:8000/index.php`, o navegador exibe *"Not Found - The requested resource was not found on this server"*.
 - **Causa:** O comando `php -S localhost:8000` foi executado numa pasta diferente da pasta onde estão guardados os arquivos do projeto.
 - **Solução:**
@@ -538,14 +493,14 @@ projeto_integrador/
   2. Abra o terminal integrado e confirme que o caminho exibido termina em `...\projeto_integrador>`.
   3. Execute o comando `php -S localhost:8000` diretamente dentro dessa pasta.
 
-### 9.3 Erro de Renderização de Diagramas no GitHub
+### 8.3 Erro de Renderização de Diagramas no GitHub
 - **Sintoma:** O GitHub exibe a mensagem *"Não foi possível renderizar a exibição rica"* no bloco de código Mermaid.
 - **Causa:** Presença de caracteres especiais (como `/`, `(`, `)`, `&`) nos nomes dos `subgraph` sem o uso de aspas.
 - **Solução:** Certifique-se de que todos os títulos de `subgraph` estão declarados com aspas duplas, por exemplo: `subgraph LIMA ["Módulo LIMA - Rotas Públicas (HTML5)"]`.
 
 ---
 
-## 10.0 Considerações Finais 
+## 9.0 Considerações Finais 
 ### Gostaria de agradecer a paciência de todos e gostaria de agradecer todos aos que me ajudaram a concluir este projeto!
 
-Este sistema foi projetado e desenvolvido por **Gregorio** como Projeto Integrador para conclusão e avaliação técnica nas unidades curriculares de **LIMA** (Linguagem de Marcação), **PBE** (Programação Back-End) e **BCD** (Banco de Dados Relacional).
+Estesistema foi projetado e desenvolvido por **Gregorio** como Projeto Integrador para conclusão e avaliação técnica nas unidades curriculares de **LIMA** (Linguagem de Marcação), **PBE** (Programação Back-End) e **BCD** (Banco de Dados Relacional).
