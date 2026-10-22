@@ -31,19 +31,17 @@
 
 ### 2.1 Apresentação Institucional da AssistênciaCi
 1. A **AssistênciaCi** é uma plataforma web para gestão simplificada de assistências técnicas especializadas em manutenção de eletrônicos (smartphones, tablets, notebooks e computadores de mesa).
-2. O sistema integra, numa única solução, uma vitrine digital pública acessível a clientes e um ambiente administrativo privado para acompanhamento do fluxo de reparações na bancada.
+2. O sistema integra, numa única solução, um catalogo de clientes, projetos e ferramentas e um ambiente administrativo privado para acompanhamento do fluxo de reparações na bancada.
 
 ### 2.2 História de Origem da Empresa (A Amizade na Bancada)
-1. A fundação da **AssistênciaCi** nasceu de um ambiente informal e amigável: encontros casuais entre amigos fascinados por desmontar, analisar e consertar componentes eletrônicos no tempo livre.
-2. O que começou como uma simples brincadeira de fim de semana evoluiu para uma paixão técnica compartilhada.
-3. Para homenagear e eternizar essa ligação de companheirismo, o grupo decidiu formalizar a brincadeira como a história oficial da empresa.
+1. A fundação da **AssistênciaCi** nasceu de um ambiente informal e amigável: encontros casuais entre amigos fascinados por resenha no tempo livre, aonde deu a ideia ao projeto.
+2. Para homenagear e eternizar essa ligação de companheirismo, eu decidi formalizar a brincadeira como a história oficial da empresa.
 4. Essa essência reflete-se na filosofia de trabalho da loja: tratamento humano, transparência absoluta nos orçamentos e compromisso de amigo na entrega de cada equipamento.
 
 ### 2.3 Objetivos Estratégicos da Plataforma
-1. **Transparência de Orçamentos:** Exibir de forma clara aos clientes os preços médios estimativos, prazos e garantias dos serviços prestados.
-2. **Controle Operacional de Bancada:** Permitir a abertura, alteração de status e controle de prazos de entrega de Ordens de Serviço (O.S.).
-3. **Gestão de Ferramental e Ativos:** Monitorar a quantidade e o estado de conservação das ferramentas essenciais da oficina.
-4. **Comunicação Interna Agilizada:** Fornecer um mural virtual de avisos e lembretes para recados urgentes entre técnicos.
+1. **Controle Operacional de Bancada:** Permitir a abertura, alteração de status e controle de prazos de entrega de Ordens de Serviço (O.S.).
+2. **Gestão de Ferramental e Ativos:** Monitorar a quantidade e o estado de conservação das ferramentas essenciais da oficina.
+3. **Comunicação Interna Agilizada:** Fornecer um mural virtual de avisos e lembretes para recados urgentes entre técnicos.
 
 ---
 
