@@ -14,7 +14,9 @@
 ### Dentro do MobaxTerm pimeiro passo é fazer: 
 
 ```mermaid
+```sql
 git clone https://github.com/Gregorio14izi/projeto_integrador
+```
 ```
 
 ## Depois entrar no postgres para criar o banco, e em seguida escrever:
