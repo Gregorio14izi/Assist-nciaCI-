@@ -8,25 +8,62 @@
 
 ---
 
-## 1.0 Identificação do Projeto e Recursos
 
-### 1.1 Credenciais Padrão do Administrador
-- **Nome de Usuário:** `administrador`
-- **E-mail de Acesso:** `adm@adm.com`
-- **Senha de Acesso:** `adm123`
-- **Nível de Permissão:** Administrador Geral / Técnico de Bancada
+## 1.0 Guia Operacional Passo a Passo (Manual Completo do Proprietário)
 
-### 1.2 Link do repositório oficial
-- **Repositório Oficial no GitHub:** [GitHub - Assist-nciaCI-](https://github.com/Gregorio14izi/Assist-nciaCI-)
+Este guia prático foi elaborado para orientar o proprietário da assistência ou os técnicos de bancada na operação diária do sistema.
 
-### 1.3 Identidade Visual e Paleta de Cores
-- **Cor Primária / Destaque (Amarelo Ouro):** `#ffc107` (Aplicações em botões principais, realces e ícones de marca).
-- **Cor Secundária / Fundo Neutro (Escuro):** `#212529` / `#1a1a1a` (Navbar, rodapé e cabeçalhos de tabelas).
-- **Cor Complementar (Branco / Neutro Claro):** `#ffffff` / `#f8f9fa` (Fundo de cards, áreas de leitura e formulários).
-- **Tipografia:** Arial / System Sans-Serif (Garantia de legibilidade e alta performance de renderização).
+### 1.1 Início de Expediente e Autenticação no Sistema
+1. Abra o navegador web (Google Chrome, Firefox, Edge ou Safari).
+2. Digite o endereço do sistema (ex.: `http://localhost:8000/index.php` ou o domínio do seu servidor).
+3. No menu superior da página, clique no botão amarelo **Área Restrita / Login**.
+4. Insira o e-mail cadastrado (`adm@adm.com`) e a senha (`adm123`).
+5. Clique em **Entrar**. O sistema redirecionará para a tela principal do painel administrativo (`app/select.php`).
+
+### 1.2 Fluxo Completo de Entrada de Equipamento (Nova O.S.)
+1. No painel administrativo, clique no botão **Novo Cadastro / Registrar O.S.** (`app/create.php`).
+2. **Preenchimento de Dados do Cliente:**
+   - **Nome do Cliente:** Digite o nome completo do proprietário.
+   - **Telefone / WhatsApp:** Digite o número com DDD para envio de avisos de conclusão.
+3. **Preenchimento de Dados do Equipamento:**
+   - **Equipamento & Defeito:** Especifique a marca, modelo e o problema relatado (ex.: *"Samsung Galaxy S21 - Tela quebrada e sem dar imagem"*).
+4. **Definição da Data de Retirada:**
+   - **Seletor de Data:** Escolha a data prevista para entrega. O sistema **bloqueará automaticamente** a escolha do dia de hoje ou dias anteriores, garantindo o prazo técnico mínimo de 24 horas.
+5. Clique em **Salvar Registro**. A nova Ordem de Serviço será criada com o status inicial `Em Análise`.
+
+### 1.3 Fluxo de Acompanhamento e Atualização de Status da Bancada
+1. Acesse o painel geral (`app/select.php`).
+2. Localize a O.S. pelo nome do cliente ou pelo número do ID.
+3. Clique no botão **Editar / Atualizar** (`app/update.php`).
+4. Conforme o trabalho progrida na bancada, altere o campo **Status do Serviço**:
+   - **Em Análise:** O aparelho está sob diagnóstico técnico.
+   - **Aguardando Peça:** O orçamento foi aprovado e a peça de reposição foi encomendada.
+   - **Em Manutenção:** O reparo ou soldagem está em execução na bancada.
+   - **Pronto para Retirada:** O serviço foi concluído e testado. O cliente já pode vir buscar.
+   - **Entregue:** O equipamento foi devolvido e o valor foi quitado.
+5. Clique em **Salvar Alterações** para registrar o novo estado no banco de dados.
+
+### 1.4 Fluxo de Entrega do Aparelho e Finalização da O.S.
+1. Quando o cliente chegar à loja para retirar o aparelho, localize a O.S. no painel.
+2. Altere o status para `Entregue`.
+3. Caso necessite remover o registro do histórico ativo, clique em **Excluir** e confirme a operação na caixa de diálogo de segurança.
+
+### 1.5 Operação do Estoque de Ferramentas da Oficina
+1. No menu superior do painel administrativo, clique na aba **Ferramentas** (`app/ferramentas.php`).
+2. **Para adicionar um novo item:** Preencha o nome da ferramenta (ex.: *"Manta Térmica Anti-Estática"*), a quantidade inicial e escolha o estado de conservação.
+3. **Para ajustar a quantidade:** Utilize os botões rápidos de soma (`+`) ou subtração (`-`) para registrar novos itens comprados ou quebrados.
+4. **Para registrar manutenção de equipamentos:** Altere o estado de conservação para `Necessita Manutenção` para evitar que outro técnico utilize uma ferramenta defeituosa.
+
+### 1.6 Publicação de Lembretes no Mural de Bancada
+1. No painel principal, navegue até a área do **Mural de Avisos**.
+2. Digite o comunicado desejado (ex.: *"Atenção equipe: Chegada de novo lote de baterias no período da tarde"*).
+3. Clique em **Salvar Recado**. O aviso ficará visível no painel administrativo e na página inicial do site para toda a equipe.
+
+### 1.7 Encerramento Seguro de Sessão (Logout)
+1. Ao sair do computador da recepção ou da bancada, clique no botão vermelho **Sair** no canto superior direito.
+2. A sessão de usuário será encerrada imediatamente, protegendo os dados dos clientes contra acessos não autorizados.
 
 ---
-
 ## 2.0 Visão Geral, Origem e Objetivos Estratégicos
 
 ### 2.1 Apresentação Institucional da AssistênciaCi
@@ -277,65 +314,9 @@ sequenceDiagram
 
 ---
 
-## 5.0 Guia Operacional Passo a Passo (Manual Completo do Proprietário)
+## 5.0 Resolução Dinâmica de URLs (`$baseUrl`) e Infraestrutura
 
-Este guia prático foi elaborado para orientar o proprietário da assistência ou os técnicos de bancada na operação diária do sistema.
-
-### 5.1 Início de Expediente e Autenticação no Sistema
-1. Abra o navegador web (Google Chrome, Firefox, Edge ou Safari).
-2. Digite o endereço do sistema (ex.: `http://localhost:8000/index.php` ou o domínio do seu servidor).
-3. No menu superior da página, clique no botão amarelo **Área Restrita / Login**.
-4. Insira o e-mail cadastrado (`adm@adm.com`) e a senha (`adm123`).
-5. Clique em **Entrar**. O sistema redirecionará para a tela principal do painel administrativo (`app/select.php`).
-
-### 5.2 Fluxo Completo de Entrada de Equipamento (Nova O.S.)
-1. No painel administrativo, clique no botão **Novo Cadastro / Registrar O.S.** (`app/create.php`).
-2. **Preenchimento de Dados do Cliente:**
-   - **Nome do Cliente:** Digite o nome completo do proprietário.
-   - **Telefone / WhatsApp:** Digite o número com DDD para envio de avisos de conclusão.
-3. **Preenchimento de Dados do Equipamento:**
-   - **Equipamento & Defeito:** Especifique a marca, modelo e o problema relatado (ex.: *"Samsung Galaxy S21 - Tela quebrada e sem dar imagem"*).
-4. **Definição da Data de Retirada:**
-   - **Seletor de Data:** Escolha a data prevista para entrega. O sistema **bloqueará automaticamente** a escolha do dia de hoje ou dias anteriores, garantindo o prazo técnico mínimo de 24 horas.
-5. Clique em **Salvar Registro**. A nova Ordem de Serviço será criada com o status inicial `Em Análise`.
-
-### 5.3 Fluxo de Acompanhamento e Atualização de Status da Bancada
-1. Acesse o painel geral (`app/select.php`).
-2. Localize a O.S. pelo nome do cliente ou pelo número do ID.
-3. Clique no botão **Editar / Atualizar** (`app/update.php`).
-4. Conforme o trabalho progrida na bancada, altere o campo **Status do Serviço**:
-   - **Em Análise:** O aparelho está sob diagnóstico técnico.
-   - **Aguardando Peça:** O orçamento foi aprovado e a peça de reposição foi encomendada.
-   - **Em Manutenção:** O reparo ou soldagem está em execução na bancada.
-   - **Pronto para Retirada:** O serviço foi concluído e testado. O cliente já pode vir buscar.
-   - **Entregue:** O equipamento foi devolvido e o valor foi quitado.
-5. Clique em **Salvar Alterações** para registrar o novo estado no banco de dados.
-
-### 5.4 Fluxo de Entrega do Aparelho e Finalização da O.S.
-1. Quando o cliente chegar à loja para retirar o aparelho, localize a O.S. no painel.
-2. Altere o status para `Entregue`.
-3. Caso necessite remover o registro do histórico ativo, clique em **Excluir** e confirme a operação na caixa de diálogo de segurança.
-
-### 5.5 Operação do Estoque de Ferramentas da Oficina
-1. No menu superior do painel administrativo, clique na aba **Ferramentas** (`app/ferramentas.php`).
-2. **Para adicionar um novo item:** Preencha o nome da ferramenta (ex.: *"Manta Térmica Anti-Estática"*), a quantidade inicial e escolha o estado de conservação.
-3. **Para ajustar a quantidade:** Utilize os botões rápidos de soma (`+`) ou subtração (`-`) para registrar novos itens comprados ou quebrados.
-4. **Para registrar manutenção de equipamentos:** Altere o estado de conservação para `Necessita Manutenção` para evitar que outro técnico utilize uma ferramenta defeituosa.
-
-### 5.6 Publicação de Lembretes no Mural de Bancada
-1. No painel principal, navegue até a área do **Mural de Avisos**.
-2. Digite o comunicado desejado (ex.: *"Atenção equipe: Chegada de novo lote de baterias no período da tarde"*).
-3. Clique em **Salvar Recado**. O aviso ficará visível no painel administrativo e na página inicial do site para toda a equipe.
-
-### 5.7 Encerramento Seguro de Sessão (Logout)
-1. Ao sair do computador da recepção ou da bancada, clique no botão vermelho **Sair** no canto superior direito.
-2. A sessão de usuário será encerrada imediatamente, protegendo os dados dos clientes contra acessos não autorizados.
-
----
-
-## 6.0 Resolução Dinâmica de URLs (`$baseUrl`) e Infraestrutura
-
-### 6.1 Mecanismo de Identificação Automática de Caminhos
+### 5.1 Mecanismo de Identificação Automática de Caminhos
 Para garantir que a aplicação funcione em qualquer servidor web local ou remoto sem a necessidade de alterar links manualmente, o arquivo `includes/header.php` calcula a raiz do projeto em tempo de execução:
 
 ```php
@@ -348,14 +329,14 @@ $basePath   = str_replace($docRoot, '', $projectDir);
 $baseUrl    = $protocol . "://" . $host . rtrim($basePath, '/') . '/';
 ```
 
-### 6.2 Vantagens do Algoritmo de Resolução Dinâmica
+### 5.2 Vantagens do Algoritmo de Resolução Dinâmica
 1. **Portabilidade Total:** O projeto pode ser renomeado (ex.: de `Assist-nciaCI-` para `projeto_integrador`) sem quebrar imagens ou estilos.
 2. **Suporte a Subpastas:** Funciona perfeitamente em servidores locais (`localhost:8000/projeto_integrador/`) ou em servidores de hospedagem remota em produção.
 3. **Eliminação de Erros 404:** Todas as tags `href` e `src` passam a utilizar a variável `<?= $baseUrl; ?>`, eliminando apontamentos absolutos incorretos.
 
 ---
 
-## 7.0 Estrutura Hierárquica de Diretórios e Arquivos
+## 6.0 Estrutura Hierárquica de Diretórios e Arquivos
 
 ```text
 projeto_integrador/
@@ -401,15 +382,15 @@ projeto_integrador/
 
 ---
 
-## 8.0 Guia Completo de Instalação, Configuração e Execução Local
+## 7.0 Guia Completo de Instalação, Configuração e Execução Local
 
-### 8.1 Requisitos Mínimos do Sistema
+### 7.1 Requisitos Mínimos do Sistema
 1. **Servidor Web / Interpretador:** PHP na versão `8.0` ou superior.
 2. **Sistema Gerenciador de Banco de Dados:** PostgreSQL `12.0` ou superior.
 3. **Extensão PHP Ativa:** `pdo_pgsql` liberada no arquivo `php.ini`.
 4. **Navegador Web Suportado:** Google Chrome, Mozilla Firefox, Microsoft Edge ou Safari atualizados.
 
-### 8.2 Instalação e Configuração do Banco PostgreSQL
+### 7.2 Instalação e Configuração do Banco PostgreSQL
 1. Abra o gerenciador do PostgreSQL (pgAdmin ou terminal psql).
 2. Crie um novo banco de dados chamado `projeto_integrador`:
    ```sql
@@ -456,7 +437,7 @@ projeto_integrador/
    );
    ```
 
-### 8.3 Clonagem do Repositório e Configuração Local
+### 7.3 Clonagem do Repositório e Configuração Local
 1. Abra o terminal ou prompt de comando na pasta desejada.
 2. Execute o comando de clonagem:
    ```bash
@@ -472,7 +453,7 @@ projeto_integrador/
    $pass   = 'sua_senha'; // Sua senha do PostgreSQL
    ```
 
-### 8.4 Execução via Servidor PHP Embutido
+### 7.4 Execução via Servidor PHP Embutido
 1. Dentro da pasta `projeto_integrador`, inicie o servidor embutido na porta `8000`:
    ```bash
    php -S localhost:8000
@@ -483,7 +464,7 @@ projeto_integrador/
 
 ---
 
-## 9.0 Matriz de Rastreabilidade e Critérios Avaliativos
+## 8.0 Matriz de Rastreabilidade e Critérios Avaliativos
 
 | Nº | Critério Avaliativo | Módulo | Descrição Completa do Atendimento | Status |
 | :-: | :--- | :---: | :--- | :-: |
@@ -497,16 +478,16 @@ projeto_integrador/
 
 ---
 
-## 10.0 Troubleshooting e Resolução de Problemas Frequentes
+## 9.0 Troubleshooting e Resolução de Problemas Frequentes
 
-### 10.1 Erro de Conexão com o Banco de Dados (`PDOException`)
+### 9.1 Erro de Conexão com o Banco de Dados (`PDOException`)
 - **Sintoma:** O navegador exibe a mensagem *"Fatal Error: Could not connect to database"*.
 - **Causa:** As credenciais no arquivo `database/connect.php` não correspondem ao seu PostgreSQL local ou o serviço do PostgreSQL está parado.
 - **Solução:**
   1. Verifique se o serviço do PostgreSQL está rodando no Windows/Linux.
   2. Abra o arquivo `database/connect.php` e confirme o nome da porta (padrão `5432`), nome do banco (`projeto_integrador`), usuário e senha.
 
-### 10.2 Erro 404 (Not Found) ao Executar o Servidor PHP
+### 9.2 Erro 404 (Not Found) ao Executar o Servidor PHP
 - **Sintoma:** Ao tentar acessar `http://localhost:8000/index.php`, o navegador exibe *"Not Found - The requested resource was not found on this server"*.
 - **Causa:** O comando `php -S localhost:8000` foi executado numa pasta diferente da pasta onde estão guardados os arquivos do projeto.
 - **Solução:**
@@ -514,13 +495,14 @@ projeto_integrador/
   2. Abra o terminal integrado e confirme que o caminho exibido termina em `...\projeto_integrador>`.
   3. Execute o comando `php -S localhost:8000` diretamente dentro dessa pasta.
 
-### 10.3 Erro de Renderização de Diagramas no GitHub
+### 9.3 Erro de Renderização de Diagramas no GitHub
 - **Sintoma:** O GitHub exibe a mensagem *"Não foi possível renderizar a exibição rica"* no bloco de código Mermaid.
 - **Causa:** Presença de caracteres especiais (como `/`, `(`, `)`, `&`) nos nomes dos `subgraph` sem o uso de aspas.
 - **Solução:** Certifique-se de que todos os títulos de `subgraph` estão declarados com aspas duplas, por exemplo: `subgraph LIMA ["Módulo LIMA - Rotas Públicas (HTML5)"]`.
 
 ---
 
-## 11.0 Considerações Finais e Autoria
+## 10.0 Considerações Finais 
+### Gostaria de agradecer a paciência de todos e gostaria de agradecer todos aos que me ajudaram a concluir este projeto!
 
 Este sistema foi projetado e desenvolvido por **Gregorio** como Projeto Integrador para conclusão e avaliação técnica nas unidades curriculares de **LIMA** (Linguagem de Marcação), **PBE** (Programação Back-End) e **BCD** (Banco de Dados Relacional).
