@@ -20,7 +20,7 @@ if (isset($_SESSION['usuario_id'])) {
 <header>
   <nav class="navbar navbar-dark bg-dark mb-4 shadow-sm">
     <div class="container">
-      <a class="navbar-brand fw-bold" href="../index.php">🛠️ AssistênciaCi - A melhor assitência técnica da Ilha de Marajó</a>
+      <a class="navbar-brand fw-bold" href="../index.php">🛠️ AssistênciaCi - A melhor assitência técnica de Americana e região</a>
     </div>
   </nav>
 </header>
